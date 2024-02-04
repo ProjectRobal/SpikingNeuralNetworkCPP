@@ -23,6 +23,7 @@
 #include "mutatiom/gauss_mutation.hpp"
 
 #include "block.hpp"
+#include "layer.hpp"
 
 number stddev(const snn::SIMDVector& vec)
 {
@@ -54,7 +55,7 @@ int main()
 
     gauss->init(a,4096);
 
-    a+=0.1;
+    a.set(a[0]+1.f,0);
     
     snn::FeedForwardNeuron<128,4> neuron;
 
@@ -64,7 +65,9 @@ int main()
 
     std::cout<<"Input size: "<<neuron.input_size()<<std::endl;
 
-    snn::Block<snn::FeedForwardNeuron<4096,1>,1,256> block(cross,mutation);
+    snn::Block<snn::FeedForwardNeuron<3,3>,1,256> block(cross,mutation);
+
+    snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(128,norm_gauss,cross,mutation);
 
     block.setup(norm_gauss);
 
@@ -74,11 +77,11 @@ int main()
     {
         const auto start = std::chrono::steady_clock::now();
 
-        block.chooseWorkers();
+        layer.shuttle();
 
-        snn::SIMDVector output=block.fire(a);
+        snn::SIMDVector output=layer.fire(a);
 
-        //long double reward=-stddev(output);
+        //long double reward=-(stddev(output)+abs((1.f-output[0])));
 
         long double reward=-abs(20.f-output[0]);
 
@@ -89,19 +92,13 @@ int main()
             std::cout<<"Output: "<<output[0]<<std::endl;
         }
 
-        block.giveReward(reward);
-
-        if(block.readyToMate())
-        {
-            //std::cout<<"Maiting"<<std::endl;
-            block.maiting(norm_gauss);
-        }
+        layer.applyReward(reward);
 
         const auto end = std::chrono::steady_clock::now();
 
         const std::chrono::duration<double> diff = end - start;
 
-        //std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
+        std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
 
     }
    

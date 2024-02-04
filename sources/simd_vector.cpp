@@ -245,6 +245,7 @@ namespace snn
         {
             this->vec[i]=this->vec[i]+v.vec[i];
         }
+
     }
 
     void SIMDVector::operator-=(const SIMDVector& v)

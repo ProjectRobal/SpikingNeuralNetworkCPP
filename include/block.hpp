@@ -143,5 +143,15 @@ namespace snn
             return output/this->workers.size();
         }       
 
+        size_t inputSize()
+        {
+            return this->population[0]->input_size();
+        }
+
+        size_t outputSize()
+        {
+            return this->population[0]->output_size();
+        }
+
     };
 }
