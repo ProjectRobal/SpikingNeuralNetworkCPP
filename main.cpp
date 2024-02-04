@@ -18,8 +18,8 @@
 int main()
 {
 
-    snn::SIMDVector a([](size_t x)-> number{ return x;},120);
-    snn::SIMDVector b([](size_t x)-> number{ return 2*x;},120);
+    snn::SIMDVector a([](size_t x)-> number{ return x;},128);
+    snn::SIMDVector b([](size_t x)-> number{ return 2*x;},128);
 
     std::shared_ptr<snn::NormalizedGaussInit> norm_gauss=std::make_shared<snn::NormalizedGaussInit>(0.f,1.f);
     std::shared_ptr<snn::GaussInit> gauss=std::make_shared<snn::GaussInit>(0.f,0.1f);
@@ -27,7 +27,7 @@ int main()
 
     std::shared_ptr<snn::OnePoint> cross=std::make_shared<snn::OnePoint>();
 
-    //std::cout<<cross->cross(a,b)<<std::endl;
+    std::cout<<cross->cross(a,b)<<std::endl;
 
     gauss->init(a,128);
 
@@ -41,6 +41,6 @@ int main()
 
     std::cout<<"Input size: "<<neuron.input_size()<<std::endl;
 
-    std::cout<<"Output: "<<neuron.fire(a)<<std::endl;
+    //std::cout<<"Output: "<<neuron.fire(a)<<std::endl;
    
 }

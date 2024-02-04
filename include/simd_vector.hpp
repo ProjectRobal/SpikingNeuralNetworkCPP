@@ -39,23 +39,13 @@ namespace snn
 
         number get(const size_t& i) const;
 
-        const SIMD& get_block(const size_t& i) const;
-
         number pop();
 
         number append(number n);
 
         void append(const SIMD& simd);
 
-        const SIMD& get_block(const size_t& i)
-        {
-            if(i>=this->vec.size())
-            {
-                return this->vec.front();
-            }
-
-            return this->vec[i];
-        }
+        const SIMD& get_block(const size_t& i) const;
 
         SIMDVector operator+(const SIMDVector& v) const;
 
@@ -112,6 +102,11 @@ namespace snn
         {
             this->ptr=0;
             this->vec.clear();
+        }
+
+        void copy_metadata(const SIMDVector& vec)
+        {
+            this->ptr=vec.ptr;
         }
 
         void print(std::ostream& out) const

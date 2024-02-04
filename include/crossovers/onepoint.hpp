@@ -7,6 +7,18 @@ namespace snn
 {
     class OnePoint : public Crossover
     {
+        const SIMDVector& compare_and_ret(const SIMDVector& a,const SIMDVector& b)
+        {
+            if(a.size()>b.size())
+            {
+                return b;
+            }
+            else
+            {
+                return a;
+            }
+        }
+
         public:
 
         OnePoint()
@@ -24,18 +36,43 @@ namespace snn
             size_t size=std::min(a.block_count(),b.block_count());
 
             size_t i=0;
+
+            size_t mid_point=elem_count/(2*MAX_SIMD_VECTOR_SIZE);
+
             
-            for(;i<size/2;++i)
+            for(;i<mid_point;++i)
             {
                 output.append(a.get_block(i));
             }
 
-            // do something with elem_count%32 != 0
+            if( elem_count%MAX_SIMD_VECTOR_SIZE != 0)
+            {
+                size_t p=(elem_count/2) % MAX_SIMD_VECTOR_SIZE;
+                
+                SIMD mid;
+                
+                size_t o=0;
+                for(;o<p;++o)
+                {
+                    mid[o]=a.get_block(mid_point)[o];
+                }
 
-            for(;i<=size;++i)
+                for(;o<MAX_SIMD_VECTOR_SIZE;++o)
+                {
+                    mid[o]=b.get_block(mid_point)[o];
+                }
+
+                output.append(mid);
+                
+                i++;
+            }
+
+            for(;i<size;++i)
             {
                 output.append(b.get_block(i));
             }
+
+            output.copy_metadata(this->compare_and_ret(a,b));
 
             return output;
         }
