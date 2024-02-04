@@ -12,29 +12,35 @@
 #include "crossovers/fastuniform.hpp"
 #include "crossovers/fastonepoint.hpp"
  
+#include "initializers/gauss.hpp"
+#include "initializers/normalized_gauss.hpp"
  
 int main()
 {
 
-    snn::SIMDVector a;
-    snn::SIMDVector b;
+    snn::SIMDVector a([](size_t x)-> number{ return x;},120);
+    snn::SIMDVector b([](size_t x)-> number{ return 2*x;},120);
 
-    snn::OnePoint cross;
-    snn::FastUniform cross1(4096);
-    snn::FastOnePoint cross2(4096);
+    std::shared_ptr<snn::NormalizedGaussInit> norm_gauss=std::make_shared<snn::NormalizedGaussInit>(0.f,1.f);
+    std::shared_ptr<snn::GaussInit> gauss=std::make_shared<snn::GaussInit>(0.f,0.1f);
+
+
+    std::shared_ptr<snn::OnePoint> cross=std::make_shared<snn::OnePoint>();
+
+    //std::cout<<cross->cross(a,b)<<std::endl;
+
+    gauss->init(a,128);
+
+    a+=0.1;
     
-    for(size_t i=1;i<=128;++i)
-    {
-        a.append(i);
-    }
+    snn::FeedForwardNeuron<128,4> neuron;
 
-    for(size_t i=1;i<=128;++i)
-    {
-        b.append(i*2);
-    }
+    neuron.setup(norm_gauss);
 
-    snn::SIMDVector c=a*b;
-    
-    std::cout<<cross2(a,b);
+    neuron.crossover(cross,neuron);
+
+    std::cout<<"Input size: "<<neuron.input_size()<<std::endl;
+
+    std::cout<<"Output: "<<neuron.fire(a)<<std::endl;
    
 }

@@ -177,10 +177,12 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(size_t i=0;i<this->vec.size();++i)
+        for(const auto& a : this->vec)
         {
-            sv.append(this->vec[i]*v);
+            sv.append(a*v);
         }
+
+        sv.ptr=this->ptr;
 
         return sv;   
     }
@@ -189,10 +191,12 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(size_t i=0;i<this->vec.size();++i)
+        for(const auto& a : this->vec)
         {
-            sv.append(this->vec[i]/v);
+            sv.append(a/v);
         }
+
+        sv.ptr=this->ptr;
 
         return sv;   
     }
@@ -201,10 +205,12 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(size_t i=0;i<this->vec.size();++i)
+        for(const auto& a : this->vec)
         {
-            sv.append(this->vec[i]-v);
+            sv.append(a-v);
         }
+
+        sv.ptr=this->ptr;
 
         return sv;   
     }
@@ -213,10 +219,12 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(size_t i=0;i<this->vec.size();++i)
+        for(const auto& a : this->vec)
         {
-            sv.append(this->vec[i]+v);
+            sv.append(a+v);
         }
+
+        sv.ptr=this->ptr;
 
         return sv;   
     }
@@ -255,33 +263,33 @@ namespace snn
 
     void SIMDVector::operator*=(const number& v)
     {
-        for(size_t i=0;i<this->vec.size();++i)
+        for(auto& a : this->vec)
         {
-            this->vec[i]=this->vec[i]*v;
+            a*=v;
         }
     }
 
     void SIMDVector::operator/=(const number& v)
     {
-        for(size_t i=0;i<this->vec.size();++i)
+        for(auto& a : this->vec)
         {
-            this->vec[i]=this->vec[i]/v;
+            a/=v;
         }
     }
 
     void SIMDVector::operator-=(const number& v)
     {
-        for(size_t i=0;i<this->vec.size();++i)
+        for(auto& a : this->vec)
         {
-            this->vec[i]=this->vec[i]-v;
+            a-=v;
         }
     }
 
     void SIMDVector::operator+=(const number& v)
     {
-        for(size_t i=0;i<this->vec.size();++i)
+        for(auto& a : this->vec)
         {
-            this->vec[i]=this->vec[i]+v;
+            a+=v;
         }
     }
 

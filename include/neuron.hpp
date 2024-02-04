@@ -14,6 +14,9 @@ namespace snn
 
     class Neuron
     {
+        protected:
+
+        long double score;
 
         public:
 
@@ -27,6 +30,47 @@ namespace snn
 
         virtual size_t output_size()=0;
 
+        virtual void giveReward(const long double& score)
+        {
+            this->score+=score;
+        }
+
+        virtual void reset()
+        {
+            this->score=0;
+        }
+
+        virtual bool operator < (const Neuron& neuron)
+        {
+            return this->score < neuron.score;
+        }
+
+        virtual bool operator > (const Neuron& neuron)
+        {
+            return this->score > neuron.score;
+        }
+
+        virtual bool operator <= (const Neuron& neuron)
+        {
+            return this->score <= neuron.score;
+        }
+
+        virtual bool operator >= (const Neuron& neuron)
+        {
+            return this->score >= neuron.score;
+        }
+
+        virtual bool operator == (const Neuron& neuron)
+        {
+            return this->score == neuron.score;
+        }
+
+        virtual bool operator != (const Neuron& neuron)
+        {
+            return this->score != neuron.score;
+        }
+
+        virtual ~Neuron(){}
     };
 
 }

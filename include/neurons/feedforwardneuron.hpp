@@ -18,6 +18,8 @@ namespace snn
     {
         protected:
 
+        long double score;
+
         SIMDVector input_weights;
         SIMDVector output_weights;
 
@@ -29,9 +31,9 @@ namespace snn
 
         std::shared_ptr<Neuron> crossover(std::shared_ptr<Crossover> cross,const Neuron& neuron)
         {
-            const FeedForwardNeuron& forward=neuron;
+            const FeedForwardNeuron<Input,Output>& forward=dynamic_cast<const FeedForwardNeuron<Input,Output>&>(neuron);
 
-            std::shared_ptr<FeedForwardNeuron> output=std::make_shared<FeedForwardNeuron>();
+            std::shared_ptr<FeedForwardNeuron<Input,Output>> output=std::make_shared<FeedForwardNeuron<Input,Output>>();
 
             output->input_weights=cross->cross(this->input_weights,forward.input_weights);
             output->output_weights=cross->cross(this->output_weights,forward.output_weights);
@@ -50,7 +52,7 @@ namespace snn
 
         SIMDVector fire(const SIMDVector& input)
         {
-            number store=input*input_weights;
+            number store=(input_weights*input).dot_product();
 
             return output_weights*store;
         }
