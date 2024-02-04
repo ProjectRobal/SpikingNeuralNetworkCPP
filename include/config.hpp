@@ -9,3 +9,9 @@ typedef long double number;
 #define MAX_SIMD_VECTOR_SIZE std::experimental::simd_abi::max_fixed_size<number>
 
 typedef std::experimental::fixed_size_simd<long double, MAX_SIMD_VECTOR_SIZE> SIMD;
+
+#define MAITING_THRESHOLD 0.4f
+
+#define AMOUNT_THAT_PASS 0.4f
+
+#define USESES_TO_MAITING 10

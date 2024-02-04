@@ -38,7 +38,6 @@ namespace snn
             size_t i=0;
 
             size_t mid_point=elem_count/(2*MAX_SIMD_VECTOR_SIZE);
-
             
             for(;i<mid_point;++i)
             {

@@ -18,13 +18,12 @@ namespace snn
     {
         protected:
 
-        long double score;
-
         SIMDVector input_weights;
         SIMDVector output_weights;
 
         public:
         FeedForwardNeuron()
+        : Neuron()
         {
 
         }

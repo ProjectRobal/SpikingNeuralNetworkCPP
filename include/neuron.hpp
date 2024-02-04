@@ -17,8 +17,14 @@ namespace snn
         protected:
 
         long double score;
+        size_t use_count;
 
         public:
+
+        Neuron()
+        : score(0.f),
+        use_count(0)
+        {}
 
         virtual std::shared_ptr<Neuron> crossover(std::shared_ptr<Crossover> cross,const Neuron& neuron)=0;
 
@@ -35,37 +41,60 @@ namespace snn
             this->score+=score;
         }
 
+        const long double& reward() const
+        {
+            return this->score;
+        }
+
+        virtual void use()
+        {
+            ++this->use_count;
+        }
+
+        const size_t& used() const
+        {
+            return this->use_count;
+        }
+
+        Neuron& operator++()
+        {
+            this->use();
+
+            return *this;
+        }
+
         virtual void reset()
         {
             this->score=0;
+            this->use_count=0;
         }
 
-        virtual bool operator < (const Neuron& neuron)
+        virtual bool operator < (const Neuron& neuron) const
         {
             return this->score < neuron.score;
         }
 
-        virtual bool operator > (const Neuron& neuron)
+        virtual bool operator > (const Neuron& neuron) const
         {
             return this->score > neuron.score;
         }
 
-        virtual bool operator <= (const Neuron& neuron)
+        virtual bool operator <= (const Neuron& neuron) const
         {
             return this->score <= neuron.score;
         }
 
-        virtual bool operator >= (const Neuron& neuron)
+        virtual bool operator >= (const Neuron& neuron) const
         {
             return this->score >= neuron.score;
         }
 
-        virtual bool operator == (const Neuron& neuron)
+        virtual bool operator == (const Neuron& neuron) const
         {
             return this->score == neuron.score;
         }
 
-        virtual bool operator != (const Neuron& neuron)
+        virtual bool operator != (const Neuron& neuron) const
         {
             return this->score != neuron.score;
         }

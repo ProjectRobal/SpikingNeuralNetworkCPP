@@ -40,6 +40,16 @@ namespace snn
         this->vec=std::move(vec.vec);
     }
 
+    void SIMDVector::reserve(size_t N)
+    {
+        this->ptr=N%MAX_SIMD_VECTOR_SIZE+1;
+
+        for(size_t i=0;i<N;++i)
+        {
+            this->append(SIMD(0));
+        }
+    }
+
     void SIMDVector::operator=(const SIMDVector& vec)
     {
         this->ptr=vec.ptr;

@@ -31,6 +31,8 @@ namespace snn
 
         SIMDVector(SIMDVector&& vec);
 
+        void reserve(size_t N);
+
         void operator=(const SIMDVector& vec);
 
         void operator=(SIMDVector&& vec);
