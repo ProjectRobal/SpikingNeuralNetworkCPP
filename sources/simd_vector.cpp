@@ -38,7 +38,20 @@ namespace snn
         vec.ptr=0;
 
         this->vec=std::move(vec.vec);
-        
+    }
+
+    void SIMDVector::operator=(const SIMDVector& vec)
+    {
+        this->ptr=vec.ptr;
+        std::copy(vec.vec.begin(),vec.vec.end(), std::back_inserter(this->vec));
+    }
+
+    void SIMDVector::operator=(SIMDVector&& vec)
+    {
+        this->ptr=vec.ptr;
+        vec.ptr=0;
+
+        this->vec=std::move(vec.vec);
     }
 
     void SIMDVector::set(const number& n, const size_t& i)
@@ -59,6 +72,16 @@ namespace snn
         }
 
         return this->vec[i/MAX_SIMD_VECTOR_SIZE][i%MAX_SIMD_VECTOR_SIZE];
+    }
+
+    const SIMD& SIMDVector::get_block(const size_t& i) const
+    {
+        if(i>=this->vec.size())
+        {
+            return this->vec[0];
+        }
+
+        return this->vec[i];
     }
 
     number SIMDVector::pop()
@@ -102,7 +125,7 @@ namespace snn
         this->vec.push_back(simd);
     }
 
-    SIMDVector SIMDVector::operator+(const SIMDVector& v)
+    SIMDVector SIMDVector::operator+(const SIMDVector& v) const
     {
         SIMDVector sv;
 
@@ -114,7 +137,7 @@ namespace snn
         return sv;
     }
 
-    SIMDVector SIMDVector::operator-(const SIMDVector& v)
+    SIMDVector SIMDVector::operator-(const SIMDVector& v) const
     {
         SIMDVector sv;
 
@@ -126,7 +149,7 @@ namespace snn
         return sv;
     }
 
-    SIMDVector SIMDVector::operator*(const SIMDVector& v)
+    SIMDVector SIMDVector::operator*(const SIMDVector& v) const
     {
         SIMDVector sv;
 
@@ -138,7 +161,7 @@ namespace snn
         return sv;
     }
 
-    SIMDVector SIMDVector::operator/(const SIMDVector& v)
+    SIMDVector SIMDVector::operator/(const SIMDVector& v) const
     {
         SIMDVector sv;
 
@@ -150,13 +173,49 @@ namespace snn
         return sv;
     }
 
-    SIMDVector SIMDVector::operator*(const number& v)
+    SIMDVector SIMDVector::operator*(const number& v) const
     {
         SIMDVector sv;
 
         for(size_t i=0;i<this->vec.size();++i)
         {
             sv.append(this->vec[i]*v);
+        }
+
+        return sv;   
+    }
+
+    SIMDVector SIMDVector::operator/(const number& v) const
+    {
+        SIMDVector sv;
+
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            sv.append(this->vec[i]/v);
+        }
+
+        return sv;   
+    }
+
+    SIMDVector SIMDVector::operator-(const number& v) const
+    {
+        SIMDVector sv;
+
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            sv.append(this->vec[i]-v);
+        }
+
+        return sv;   
+    }
+
+    SIMDVector SIMDVector::operator+(const number& v) const
+    {
+        SIMDVector sv;
+
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            sv.append(this->vec[i]+v);
         }
 
         return sv;   
@@ -199,6 +258,30 @@ namespace snn
         for(size_t i=0;i<this->vec.size();++i)
         {
             this->vec[i]=this->vec[i]*v;
+        }
+    }
+
+    void SIMDVector::operator/=(const number& v)
+    {
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            this->vec[i]=this->vec[i]/v;
+        }
+    }
+
+    void SIMDVector::operator-=(const number& v)
+    {
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            this->vec[i]=this->vec[i]-v;
+        }
+    }
+
+    void SIMDVector::operator+=(const number& v)
+    {
+        for(size_t i=0;i<this->vec.size();++i)
+        {
+            this->vec[i]=this->vec[i]+v;
         }
     }
 

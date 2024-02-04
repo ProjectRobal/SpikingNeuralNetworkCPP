@@ -31,9 +31,15 @@ namespace snn
 
         SIMDVector(SIMDVector&& vec);
 
+        void operator=(const SIMDVector& vec);
+
+        void operator=(SIMDVector&& vec);
+
         void set(const number& n, const size_t& i);
 
         number get(const size_t& i) const;
+
+        const SIMD& get_block(const size_t& i) const;
 
         number pop();
 
@@ -51,15 +57,21 @@ namespace snn
             return this->vec[i];
         }
 
-        SIMDVector operator+(const SIMDVector& v);
+        SIMDVector operator+(const SIMDVector& v) const;
 
-        SIMDVector operator-(const SIMDVector& v);
+        SIMDVector operator-(const SIMDVector& v) const;
 
-        SIMDVector operator*(const SIMDVector& v);
+        SIMDVector operator*(const SIMDVector& v) const;
 
-        SIMDVector operator/(const SIMDVector& v);
+        SIMDVector operator/(const SIMDVector& v) const;
 
-        SIMDVector operator*(const number& v);
+        SIMDVector operator*(const number& v) const;
+
+        SIMDVector operator/(const number& v) const;
+
+        SIMDVector operator-(const number& v) const;
+
+        SIMDVector operator+(const number& v) const;
 
         void operator+=(const SIMDVector& v);
 
@@ -71,14 +83,36 @@ namespace snn
 
         void operator*=(const number& v);
 
+        void operator/=(const number& v);
+
+        void operator-=(const number& v);
+
+        void operator+=(const number& v);
+
+        SIMDVector operator-() const
+        {
+            return (*this)*-1;
+        }
+
         size_t size() const
         {
             return (this->vec.size()-1)*MAX_SIMD_VECTOR_SIZE + ( this->ptr );
         }
 
+        size_t block_count() const
+        {
+            return this->vec.size();
+        }
+
         number dot_product();
 
         number operator[](const size_t& i) const;
+
+        void clear()
+        {
+            this->ptr=0;
+            this->vec.clear();
+        }
 
         void print(std::ostream& out) const
         {
@@ -96,3 +130,4 @@ namespace snn
 }
 
 std::ostream& operator<<(std::ostream& out,const snn::SIMDVector& vec);
+
