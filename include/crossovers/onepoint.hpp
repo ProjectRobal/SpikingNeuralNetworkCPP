@@ -33,6 +33,11 @@ namespace snn
 
             size_t elem_count=std::min(a.size(),b.size());
 
+            if(elem_count==1)
+            {
+                output=(a+b)/2;
+            }
+
             size_t size=std::min(a.block_count(),b.block_count());
 
             size_t i=0;

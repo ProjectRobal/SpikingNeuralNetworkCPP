@@ -11,6 +11,7 @@
 #include "neuron.hpp"
 #include "initializer.hpp"
 #include "crossover.hpp"
+#include "mutation.hpp"
 
 #include "config.hpp"
 
@@ -21,6 +22,7 @@ namespace snn
     {        
 
         std::shared_ptr<Crossover> crossing;
+        std::shared_ptr<Mutation> mutate;
 
         size_t mating_counter;
 
@@ -31,8 +33,9 @@ namespace snn
 
         public:
 
-        Block(std::shared_ptr<Crossover> _crossing)
+        Block(std::shared_ptr<Crossover> _crossing,std::shared_ptr<Mutation> _mutate)
         : crossing(_crossing),
+        mutate(_mutate),
         uniform(0,Populus-1),
         population({NULL}),
         workers({NULL})
@@ -109,7 +112,10 @@ namespace snn
 
             while(iter<pivot)
             {
-                (*(iter2++))=(*iter)->crossover(this->crossing,**(iter+1));
+                auto ite=iter2;
+                (*(ite))=(*iter)->crossover(this->crossing,**(iter+1));
+                (*(ite))->mutate(this->mutate);
+                ite++;
                 iter+=2;
             }
 
@@ -117,6 +123,7 @@ namespace snn
             {
                 std::shared_ptr<NeuronT> n_neuron=std::make_shared<NeuronT>();
                 n_neuron->setup(init);
+                n_neuron->mutate(this->mutate);
 
                 (*pivot)=n_neuron;
 

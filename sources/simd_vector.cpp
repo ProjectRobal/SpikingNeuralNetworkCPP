@@ -303,7 +303,7 @@ namespace snn
         }
     }
 
-    number SIMDVector::dot_product()
+    number SIMDVector::dot_product() const
     {
         number output=0;
 

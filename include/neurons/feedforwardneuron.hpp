@@ -40,6 +40,12 @@ namespace snn
             return output;
         }
 
+        void mutate(std::shared_ptr<Mutation> mutate)
+        {
+            mutate->mutate(this->input_weights);
+            mutate->mutate(this->output_weights);
+        }
+
         void setup(std::shared_ptr<Initializer> init)
         {
             this->input_weights.clear();

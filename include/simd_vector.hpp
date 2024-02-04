@@ -96,7 +96,7 @@ namespace snn
             return this->vec.size();
         }
 
-        number dot_product();
+        number dot_product() const;
 
         number operator[](const size_t& i) const;
 
