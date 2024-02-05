@@ -6,6 +6,8 @@
 #include <initializer_list>
 #include <functional>
 
+#include "parallel.hpp"
+
 #include "config.hpp"
 
 namespace snn

@@ -15,3 +15,5 @@ typedef std::experimental::fixed_size_simd<long double, MAX_SIMD_VECTOR_SIZE> SI
 #define AMOUNT_THAT_PASS 0.4f
 
 #define USESES_TO_MAITING 10
+
+#define MAX_THREAD_POOL 8

@@ -1,4 +1,5 @@
 #include "simd_vector.hpp"
+#include "parallel.hpp"
 
 
 namespace snn
@@ -42,9 +43,9 @@ namespace snn
 
     void SIMDVector::reserve(size_t N)
     {
-        this->ptr=N%MAX_SIMD_VECTOR_SIZE+1;
+        this->ptr=(N%MAX_SIMD_VECTOR_SIZE)+1;
 
-        for(size_t i=0;i<N;++i)
+        for(size_t i=0;i<(N/MAX_SIMD_VECTOR_SIZE) + 1;++i)
         {
             this->append(SIMD(0));
         }
@@ -144,6 +145,8 @@ namespace snn
             sv.append(this->vec[i]+v.vec[i]);
         }
 
+        sv.ptr=std::min(this->ptr,v.ptr);
+
         return sv;
     }
 
@@ -155,6 +158,8 @@ namespace snn
         {
             sv.append(this->vec[i]-v.vec[i]);
         }
+
+        sv.ptr=std::min(this->ptr,v.ptr);
 
         return sv;
     }
@@ -168,6 +173,8 @@ namespace snn
             sv.append(this->vec[i]*v.vec[i]);
         }
 
+        sv.ptr=std::min(this->ptr,v.ptr);
+
         return sv;
     }
 
@@ -180,6 +187,8 @@ namespace snn
             sv.append(this->vec[i]/v.vec[i]);
         }
 
+        sv.ptr=std::min(this->ptr,v.ptr);
+
         return sv;
     }
 
@@ -187,9 +196,9 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(const auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            sv.append(a*v);
+            sv.append(this->vec[i]*v);
         }
 
         sv.ptr=this->ptr;
@@ -201,9 +210,9 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(const auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            sv.append(a/v);
+            sv.append(this->vec[i]/v);
         }
 
         sv.ptr=this->ptr;
@@ -215,9 +224,9 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(const auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            sv.append(a-v);
+            sv.append(this->vec[i]-v);
         }
 
         sv.ptr=this->ptr;
@@ -229,9 +238,9 @@ namespace snn
     {
         SIMDVector sv;
 
-        for(const auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            sv.append(a+v);
+            sv.append(this->vec[i]+v);
         }
 
         sv.ptr=this->ptr;
@@ -241,9 +250,10 @@ namespace snn
 
     void SIMDVector::operator+=(const SIMDVector& v)
     {
+
         for(size_t i=0;i<std::min(this->vec.size(),v.vec.size());++i)
         {
-            this->vec[i]=this->vec[i]+v.vec[i];
+            this->vec[i]+=v[i];
         }
 
     }
@@ -252,7 +262,7 @@ namespace snn
     {
         for(size_t i=0;i<std::min(this->vec.size(),v.vec.size());++i)
         {
-            this->vec[i]=this->vec[i]-v.vec[i];
+            this->vec[i]-=v[i];
         }
     }
 
@@ -260,7 +270,7 @@ namespace snn
     {
         for(size_t i=0;i<std::min(this->vec.size(),v.vec.size());++i)
         {
-            this->vec[i]=this->vec[i]*v.vec[i];
+            this->vec[i]*=v[i];
         }
     }
 
@@ -268,39 +278,39 @@ namespace snn
     {
         for(size_t i=0;i<std::min(this->vec.size(),v.vec.size());++i)
         {
-            this->vec[i]=this->vec[i]/v.vec[i];
+            this->vec[i]/=v[i];
         }
     }
 
     void SIMDVector::operator*=(const number& v)
     {
-        for(auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            a*=v;
+            this->vec[i]*=v;
         }
     }
 
     void SIMDVector::operator/=(const number& v)
     {
-        for(auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            a/=v;
+            this->vec[i]/=v;
         }
     }
 
     void SIMDVector::operator-=(const number& v)
     {
-        for(auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            a-=v;
+            this->vec[i]-=v;
         }
     }
 
     void SIMDVector::operator+=(const number& v)
     {
-        for(auto& a : this->vec)
+        for(size_t i=0;i<this->vec.size();++i)
         {
-            a+=v;
+            this->vec[i]+=v;
         }
     }
 
@@ -308,9 +318,9 @@ namespace snn
     {
         number output=0;
 
-        for(const auto& s : this->vec)
+        for(const auto& a : this->vec)
         {
-            output+=std::experimental::reduce(s);
+            output+=std::experimental::reduce(a);
         }
 
         return output;

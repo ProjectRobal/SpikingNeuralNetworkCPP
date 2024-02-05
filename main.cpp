@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <iomanip>
 #include <numeric>
+#include "parallel.hpp"
 
 #include "config.hpp"
 
@@ -21,6 +22,8 @@
 #include "initializers/normalized_gauss.hpp"
 
 #include "mutatiom/gauss_mutation.hpp"
+
+#include "parallel.hpp"
 
 #include "block.hpp"
 #include "layer.hpp"
@@ -41,35 +44,21 @@ int main()
 {
 
     snn::SIMDVector a([](size_t x)-> number{ return x;},128);
-    snn::SIMDVector b([](size_t x)-> number{ return 2*x;},128);
+    snn::SIMDVector b([](size_t x)-> number{ return x;},128);
 
     std::shared_ptr<snn::NormalizedGaussInit> norm_gauss=std::make_shared<snn::NormalizedGaussInit>(0.f,0.01f);
     std::shared_ptr<snn::GaussInit> gauss=std::make_shared<snn::GaussInit>(0.f,0.1f);
 
     std::shared_ptr<snn::GaussMutation> mutation=std::make_shared<snn::GaussMutation>(0.f,0.01f,0.1f);
-
-
     std::shared_ptr<snn::OnePoint> cross=std::make_shared<snn::OnePoint>();
 
-    std::cout<<cross->cross(a,b)<<std::endl;
+    std::cout<<a+b<<std::endl;
 
     gauss->init(a,4096);
 
     a.set(a[0]+1.f,0);
-    
-    snn::FeedForwardNeuron<128,4> neuron;
 
-    neuron.setup(norm_gauss);
-
-    neuron.crossover(cross,neuron);
-
-    std::cout<<"Input size: "<<neuron.input_size()<<std::endl;
-
-    snn::Block<snn::FeedForwardNeuron<3,3>,1,256> block(cross,mutation);
-
-    snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(128,norm_gauss,cross,mutation);
-
-    block.setup(norm_gauss);
+    snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(4,norm_gauss,cross,mutation);
 
     long double best_reward=-100;
 
