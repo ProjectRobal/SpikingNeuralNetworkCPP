@@ -9,7 +9,7 @@ namespace snn
     {
         public:
 
-        virtual void activate(SIMDVector& vec)=0;
+        virtual inline void activate(SIMDVector& vec)=0;
     };
 
 }

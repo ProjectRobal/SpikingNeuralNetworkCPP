@@ -13,6 +13,9 @@
 
 #include "config.hpp"
 
+#include "activation.hpp"
+#include "activation/linear.hpp"
+
 
 namespace snn
 {
@@ -21,13 +24,16 @@ namespace snn
     {
         std::vector<Block<NeuronT,Working,Populus>> blocks;
         std::shared_ptr<Initializer> init;
-
-        
+        std::shared_ptr<Activation> activation_func;
 
         public:
 
         Layer()
-        {}
+        {
+
+            this->activation_func=std::make_shared<Linear>();
+
+        }
 
         Layer(size_t N,std::shared_ptr<Initializer> init,std::shared_ptr<Crossover> _crossing,std::shared_ptr<Mutation> _mutate)
         {
@@ -37,6 +43,11 @@ namespace snn
         void setInitializer(std::shared_ptr<Initializer> init)
         {
             this->init=init;
+        }
+
+        void setActivationFunction(std::shared_ptr<Activation> active)
+        {
+            this->activation_func=active;
         }
 
         void setup(size_t N,std::shared_ptr<Initializer> init,std::shared_ptr<Crossover> _crossing,std::shared_ptr<Mutation> _mutate)
@@ -88,7 +99,11 @@ namespace snn
 
             }
 
-            return output/this->blocks.size();
+            output/=this->blocks.size();
+
+            this->activation_func->activate(output);
+
+            return output;
         }
 
 

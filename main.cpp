@@ -66,13 +66,9 @@ int main()
 
     long double best_reward=-100;
 
-    snn::Sigmoid activate;
+    snn::ReLu activate;
 
-    activate.activate(a);
-
-    std::cout<<a<<std::endl;
-
-    return 0;
+    layer.setActivationFunction(std::make_shared<snn::Sigmoid>());
 
     while(abs(best_reward)>0.001f)
     {
@@ -80,7 +76,7 @@ int main()
 
         layer.shuttle();
 
-        snn::SIMDVector output=layer.fire(a);
+        snn::SIMDVector output=layer.fire(a)*50.f;
 
         //long double reward=-(stddev(output)+abs((1.f-output[0])));
 
@@ -99,7 +95,7 @@ int main()
 
         const std::chrono::duration<double> diff = end - start;
 
-        std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
+       std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
 
     }
    

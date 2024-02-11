@@ -8,7 +8,7 @@ namespace snn
     {
         public:
 
-        void activate(SIMDVector& vec)
+        inline void activate(SIMDVector& vec)
         {
             // do nothing, placeholder activation
         }

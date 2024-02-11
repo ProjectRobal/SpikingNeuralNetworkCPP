@@ -8,7 +8,7 @@ namespace snn
     {
         public:
 
-        void activate(SIMDVector& vec)
+        inline void activate(SIMDVector& vec)
         {
             SIMDVector filtered=vec>0;
 

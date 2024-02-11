@@ -38,9 +38,11 @@ namespace snn
 
         public:
 
-        void activate(SIMDVector& vec)
+        inline void activate(SIMDVector& vec)
         {
-            vec=exp(vec)/(exp(vec)+1);
+            SIMDVector v=exp(vec);
+
+            vec=v/(v+1);
         }
     };
 }
