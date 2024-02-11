@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 
 #include "block.hpp"
 #include "neuron.hpp"
@@ -20,6 +21,8 @@ namespace snn
     {
         std::vector<Block<NeuronT,Working,Populus>> blocks;
         std::shared_ptr<Initializer> init;
+
+        
 
         public:
 

@@ -8,7 +8,9 @@ typedef long double number;
 
 #define MAX_SIMD_VECTOR_SIZE std::experimental::simd_abi::max_fixed_size<number>
 
-typedef std::experimental::fixed_size_simd<long double, MAX_SIMD_VECTOR_SIZE> SIMD;
+typedef std::experimental::fixed_size_simd<number , MAX_SIMD_VECTOR_SIZE> SIMD;
+
+typedef std::experimental::fixed_size_simd_mask<number , MAX_SIMD_VECTOR_SIZE> SIMD_MASK;
 
 #define MAITING_THRESHOLD 0.4f
 

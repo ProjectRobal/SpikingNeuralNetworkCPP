@@ -27,6 +27,8 @@ namespace snn
 
         SIMDVector(std::function<number(size_t)> init_func,size_t N);
 
+        SIMDVector(number v,size_t N);
+
         SIMDVector(const std::initializer_list<number>& arr);
 
         SIMDVector(const SIMDVector& vec);
@@ -47,6 +49,8 @@ namespace snn
 
         number append(number n);
 
+        void append(const SIMD_MASK& mask);
+
         void append(const SIMD& simd);
 
         const SIMD& get_block(const size_t& i) const;
@@ -66,6 +70,30 @@ namespace snn
         SIMDVector operator-(const number& v) const;
 
         SIMDVector operator+(const number& v) const;
+
+        SIMDVector operator==(const SIMDVector& v) const;
+
+        SIMDVector operator!=(const SIMDVector& v) const;
+
+        SIMDVector operator>=(const SIMDVector& v) const;
+
+        SIMDVector operator<=(const SIMDVector& v) const;
+
+        SIMDVector operator>(const SIMDVector& v) const;
+
+        SIMDVector operator<(const SIMDVector& v) const;
+
+        SIMDVector operator==(const number& v) const;
+
+        SIMDVector operator!=(const number& v) const;
+
+        SIMDVector operator>=(const number& v) const;
+
+        SIMDVector operator<=(const number& v) const;
+
+        SIMDVector operator>(const number& v) const;
+
+        SIMDVector operator<(const number& v) const;
 
         void operator+=(const SIMDVector& v);
 

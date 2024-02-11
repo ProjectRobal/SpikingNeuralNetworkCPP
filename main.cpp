@@ -28,6 +28,9 @@
 #include "block.hpp"
 #include "layer.hpp"
 
+#include "activation/sigmoid.hpp"
+#include "activation/relu.hpp"
+
 number stddev(const snn::SIMDVector& vec)
 {
     number mean=vec.dot_product();
@@ -39,6 +42,7 @@ number stddev(const snn::SIMDVector& vec)
     return std::sqrt(omg.dot_product()/vec.size());
 
 }
+
  
 int main()
 {
@@ -52,15 +56,23 @@ int main()
     std::shared_ptr<snn::GaussMutation> mutation=std::make_shared<snn::GaussMutation>(0.f,0.01f,0.1f);
     std::shared_ptr<snn::OnePoint> cross=std::make_shared<snn::OnePoint>();
 
-    std::cout<<a+b<<std::endl;
+    //std::cout<<a+b<<std::endl;
 
     gauss->init(a,4096);
 
-    a.set(a[0]+1.f,0);
+    a.set(a[0]+0,0);
 
     snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(4,norm_gauss,cross,mutation);
 
     long double best_reward=-100;
+
+    snn::Sigmoid activate;
+
+    activate.activate(a);
+
+    std::cout<<a<<std::endl;
+
+    return 0;
 
     while(abs(best_reward)>0.001f)
     {
