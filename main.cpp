@@ -6,6 +6,8 @@
 #include <cstddef>
 #include <iomanip>
 #include <numeric>
+#include <fstream>
+
 #include "parallel.hpp"
 
 #include "config.hpp"
@@ -62,6 +64,38 @@ int main()
 
     a.set(a[0]+0,0);
 
+    snn::FeedForwardNeuron<128,4> test;
+
+    test.setup(gauss);
+
+    std::ofstream file;
+
+    file.open("test.neur",std::ios::out | std::ios::binary );
+
+    std::cout<<test.fire(a)<<std::endl;
+
+    test.save(file);
+
+    file.close();
+
+    snn::FeedForwardNeuron<128,4> test1;
+
+    std::cout<<"Loaded:"<<std::endl;
+
+    std::ifstream _file;
+
+    _file.open("test.neur",std::ios::in | std::ios::binary );
+
+    test1.load(_file);
+
+    std::cout<<test1.fire(a)<<std::endl;
+
+    _file.close();
+
+
+
+    return 0;
+
     snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(4,norm_gauss,cross,mutation);
 
     long double best_reward=-100;
@@ -95,7 +129,7 @@ int main()
 
         const std::chrono::duration<double> diff = end - start;
 
-       std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
+       //std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
 
     }
    
