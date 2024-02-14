@@ -6,8 +6,6 @@
 #include <initializer_list>
 #include <functional>
 
-#include "parallel.hpp"
-
 #include "config.hpp"
 
 namespace snn
@@ -48,6 +46,9 @@ namespace snn
         number pop();
 
         number append(number n);
+
+        number remove(size_t i)
+        {}
 
         void append(const SIMD_MASK& mask);
 
