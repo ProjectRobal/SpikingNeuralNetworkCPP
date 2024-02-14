@@ -73,18 +73,78 @@ int main()
 
     std::cout<<"Network started"<<std::endl;
 
+    std::string plot;
+
+    size_t plot_iter=0;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot+="_";
+    }
+
+    std::string plot1;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot1+="_";
+    }
+
+    std::string plot2;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot2+="_";
+    }
+
     while(true)
     {
+        
+        std::cout<<plot<<std::endl;
+        std::cout<<plot1<<std::endl<<std::endl;
+
+        std::cout<<plot2<<std::endl;
 
         input1.update(inputs);
 
         input2.update(inputs);
 
+        if(inputs[0]>0.5)
+        {
+            plot[plot_iter]='|';
+        }
+
+        if(inputs[1]>0.5)
+        {
+            plot1[plot_iter]='|';
+        }
+        
+        
+
         network.excite(inputs);
 
         snn::SIMDVector output=network.step();
 
+        if(output[14]>0.5)
+        {
+            plot2[plot_iter]='|';
+        }
+
+        plot_iter++;
+
         std::this_thread::sleep_for(1ms);
+
+        system("clear");
+
+        if( plot_iter > 128 )
+        {
+            for(size_t i=0;i<128;++i)
+            {
+                plot[i]='_';
+                plot1[i]='_';
+                plot2[i]='_';
+            }
+            plot_iter=0;
+        }
     }
 
     return 0;
