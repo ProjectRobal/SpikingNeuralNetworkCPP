@@ -59,7 +59,11 @@ int main()
 
     snn::NumberEncoder input1(0,2,10,1.0,0.0);
 
+    snn::NumberEncoder input2(1,2,10,1.0,0.0);
+
     input1.setValue(0.0);
+
+    input2.setValue(0.3);
 
     snn::SIMDVector inputs(0,4);
 
@@ -69,16 +73,78 @@ int main()
 
     std::cout<<"Network started"<<std::endl;
 
+    std::string plot;
+
+    size_t plot_iter=0;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot+="_";
+    }
+
+    std::string plot1;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot1+="_";
+    }
+
+    std::string plot2;
+
+    for(size_t i=0;i<128;i++)
+    {
+        plot2+="_";
+    }
+
     while(true)
     {
         
+        std::cout<<plot<<std::endl;
+        std::cout<<plot1<<std::endl<<std::endl;
+
+        std::cout<<plot2<<std::endl;
+
         input1.update(inputs);
+
+        input2.update(inputs);
+
+        if(inputs[0]>0.5)
+        {
+            plot[plot_iter]='|';
+        }
+
+        if(inputs[1]>0.5)
+        {
+            plot1[plot_iter]='|';
+        }
+        
+        
 
         network.excite(inputs);
 
-        network.step();
+        snn::SIMDVector output=network.step();
 
-        std::this_thread::sleep_for(1ms);
+        if(output[14]>0.5)
+        {
+            plot2[plot_iter]='|';
+        }
+
+        plot_iter++;
+
+        std::this_thread::sleep_for(100ms);
+
+        system("clear");
+
+        if( plot_iter > 128 )
+        {
+            for(size_t i=0;i<128;++i)
+            {
+                plot[i]='_';
+                plot1[i]='_';
+                plot2[i]='_';
+            }
+            plot_iter=0;
+        }
     }
 
     return 0;

@@ -38,14 +38,17 @@ namespace snn
     {
         SIMDVector check=this->charges<NEURON_THRESHOLD_LEVEL;
 
-        // clear fired neurons
-        this->charges=this->charges*check;
+        this->charges*=check;
 
         for(size_t i=0;i<check.size();++i)
         {
-            if(check[i]<1)
+            if(check[i]<0.5)
             {
+                number my_own_charge=this->charges[i];
+
                 this->charges+=this->neurons[i].weights;
+
+                this->charges.set(my_own_charge,i);
 
                 if(this->neurons[i].on_fire)
                 {
@@ -55,7 +58,7 @@ namespace snn
             }
         }
 
-        return check+1;
+        return check<0.5;
 
     }
 }
