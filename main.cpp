@@ -7,31 +7,20 @@
 #include <iomanip>
 #include <numeric>
 #include <fstream>
-
-#include "parallel.hpp"
+#include <chrono>
+#include <thread>
 
 #include "config.hpp"
 
 #include "simd_vector.hpp"
 
-#include "neurons/feedforwardneuron.hpp"
-
-#include "crossovers/onepoint.hpp"
-#include "crossovers/fastuniform.hpp"
-#include "crossovers/fastonepoint.hpp"
- 
 #include "initializers/gauss.hpp"
 #include "initializers/normalized_gauss.hpp"
 
-#include "mutatiom/gauss_mutation.hpp"
+#include "encoders/number_encoder.hpp"
 
-#include "parallel.hpp"
+#include "FCN.hpp"
 
-#include "block.hpp"
-#include "layer.hpp"
-
-#include "activation/sigmoid.hpp"
-#include "activation/relu.hpp"
 
 number stddev(const snn::SIMDVector& vec)
 {
@@ -45,7 +34,15 @@ number stddev(const snn::SIMDVector& vec)
 
 }
 
- 
+using namespace std::chrono_literals;
+
+
+void callback(size_t i)
+{
+    std::cout<<"Neuron: "<<i<<" fired"<<std::endl;
+}
+
+
 int main()
 {
 
@@ -55,82 +52,36 @@ int main()
     std::shared_ptr<snn::NormalizedGaussInit> norm_gauss=std::make_shared<snn::NormalizedGaussInit>(0.f,0.01f);
     std::shared_ptr<snn::GaussInit> gauss=std::make_shared<snn::GaussInit>(0.f,0.1f);
 
-    std::shared_ptr<snn::GaussMutation> mutation=std::make_shared<snn::GaussMutation>(0.f,0.01f,0.1f);
-    std::shared_ptr<snn::OnePoint> cross=std::make_shared<snn::OnePoint>();
+    snn::FullyConnectedNetwork network(1024,gauss);   
 
-    //std::cout<<a+b<<std::endl;
+    network[14].on_fire=callback;
+    network[15].on_fire=callback;
 
-    gauss->init(a,4096);
+    snn::NumberEncoder input1(0,2,10,1.0,0.0);
 
-    a.set(a[0]+0,0);
+    input1.setValue(0.0);
 
-    snn::FeedForwardNeuron<128,4> test;
+    snn::SIMDVector inputs(0,4);
 
-    test.setup(gauss);
+    snn::SIMDVector input_weight;
 
-    std::ofstream file;
+    gauss->init(input_weight,4);
 
-    file.open("test.neur",std::ios::out | std::ios::binary );
+    std::cout<<"Network started"<<std::endl;
 
-    std::cout<<test.fire(a)<<std::endl;
+    while(true)
+    {
+        
+        input1.update(inputs);
 
-    test.save(file);
+        network.excite(inputs);
 
-    file.close();
+        network.step();
 
-    snn::FeedForwardNeuron<128,4> test1;
-
-    std::cout<<"Loaded:"<<std::endl;
-
-    std::ifstream _file;
-
-    _file.open("test.neur",std::ios::in | std::ios::binary );
-
-    test1.load(_file);
-
-    std::cout<<test1.fire(a)<<std::endl;
-
-    _file.close();
-
-
+        std::this_thread::sleep_for(1ms);
+    }
 
     return 0;
 
-    snn::Layer<snn::FeedForwardNeuron<4096,1>,1,32> layer(4,norm_gauss,cross,mutation);
-
-    long double best_reward=-100;
-
-    snn::ReLu activate;
-
-    layer.setActivationFunction(std::make_shared<snn::Sigmoid>());
-
-    while(abs(best_reward)>0.001f)
-    {
-        const auto start = std::chrono::steady_clock::now();
-
-        layer.shuttle();
-
-        snn::SIMDVector output=layer.fire(a)*50.f;
-
-        //long double reward=-(stddev(output)+abs((1.f-output[0])));
-
-        long double reward=-abs(20.f-output[0]);
-
-        if(reward>best_reward)
-        {
-            std::cout<<"Best reward: "<<reward<<std::endl;
-            best_reward=reward;
-            std::cout<<"Output: "<<output[0]<<std::endl;
-        }
-
-        layer.applyReward(reward);
-
-        const auto end = std::chrono::steady_clock::now();
-
-        const std::chrono::duration<double> diff = end - start;
-
-       //std::cout << "Time: " << std::setw(9) << diff.count() << std::endl;
-
-    }
    
 }

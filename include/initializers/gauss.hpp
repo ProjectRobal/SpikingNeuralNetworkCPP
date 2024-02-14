@@ -1,6 +1,7 @@
 #pragma once
 
 #include <random>
+#include <cmath>
 
 #include "initializer.hpp"
 
@@ -30,7 +31,7 @@ namespace snn
 
             for(size_t i=0;i<N;++i)
             {
-                vec.append(this->gauss(gen));
+                vec.append(abs(this->gauss(gen)));
             }
         }
     };

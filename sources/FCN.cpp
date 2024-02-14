@@ -1,18 +1,20 @@
-#include "Network.hpp"
+#include "FCN.hpp"
+#include <iostream>
+
 
 namespace snn
 {
-    Network::Network()
+    FullyConnectedNetwork::FullyConnectedNetwork()
     {
 
     }
 
-    Network::Network(size_t neuron_size,std::shared_ptr<Initializer> init)
+    FullyConnectedNetwork::FullyConnectedNetwork(size_t neuron_size,std::shared_ptr<Initializer> init)
     {
         this->setup(neuron_size,init);
     }
 
-    void Network::setup(size_t neuron_size,std::shared_ptr<Initializer> init)
+    void FullyConnectedNetwork::setup(size_t neuron_size,std::shared_ptr<Initializer> init)
     {
         for(size_t i=0;i<neuron_size;++i)
         {
@@ -27,17 +29,12 @@ namespace snn
 
     }
 
-    void Network::excite(size_t i)
+    void FullyConnectedNetwork::excite(const SIMDVector& inputs)
     {
-        if(i>=this->neurons.size())
-        {
-            throw std::out_of_range("Neuron out of range!!");
-        }
-
-        this->charges+=this->neurons[i].weights;
+        this->charges+=inputs;
     }
 
-    void Network::step()
+    SIMDVector FullyConnectedNetwork::step()
     {
         SIMDVector check=this->charges<NEURON_THRESHOLD_LEVEL;
 
@@ -49,8 +46,16 @@ namespace snn
             if(check[i]<1)
             {
                 this->charges+=this->neurons[i].weights;
+
+                if(this->neurons[i].on_fire)
+                {
+                    this->neurons[i].on_fire(i);
+                }
+
             }
         }
+
+        return check+1;
 
     }
 }

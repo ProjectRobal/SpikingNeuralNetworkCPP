@@ -20,11 +20,9 @@ namespace snn
         SIMDVector weights;
         // a callback that activate when neuron fire
         std::function<void(size_t)> on_fire;
-        // when set to true it means it cannot be moved
-        bool fixed;
     };
 
-    class Network
+    class FullyConnectedNetwork
     {
         protected:
 
@@ -38,26 +36,26 @@ namespace snn
 
         public:
 
-        Network();
+        FullyConnectedNetwork();
 
-        Network(size_t neuron_size,std::shared_ptr<Initializer> init);
+        FullyConnectedNetwork(size_t neuron_size,std::shared_ptr<Initializer> init);
 
         void setup(size_t neuron_size,std::shared_ptr<Initializer> init);
 
         // excite a neuron at specified index
-        void excite(size_t i);
+        void excite(const SIMDVector& inputs);
 
         // check state of each neuron and execute them 
-        void step(); 
+        SIMDVector step(); 
 
-        SIMDVector& operator[](size_t i)
+        Neuron& operator[](size_t i)
         {
             if(i>=this->neurons.size())
             {
                 throw std::out_of_range("Neuron out of range!!");
             }
 
-            return this->neurons[i].weights;
+            return this->neurons[i];
         }
 
         void remove(size_t i)
@@ -77,6 +75,22 @@ namespace snn
             }
 
             this->charges.remove(i);
+        }
+
+        void insert(size_t i,std::shared_ptr<Initializer> init)
+        {
+            Neuron new_neuron;
+
+            init->init(new_neuron.weights,this->size()+1);
+
+            this->charges.insert(i,0);
+
+            this->neurons.insert(this->neurons.begin()+i,new_neuron);
+        }
+
+        size_t size()
+        {
+            return this->neurons.size();
         }
 
     };

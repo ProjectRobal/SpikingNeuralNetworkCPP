@@ -1,5 +1,4 @@
 #include "simd_vector.hpp"
-#include "parallel.hpp"
 
 
 namespace snn
@@ -48,6 +47,72 @@ namespace snn
         vec.ptr=0;
 
         this->vec=std::move(vec.vec);
+    }
+
+    number SIMDVector::remove(size_t i)
+    {
+        size_t vec_id=i/MAX_SIMD_VECTOR_SIZE;
+
+        size_t o=i%MAX_SIMD_VECTOR_SIZE;
+
+        number to_rem=this->vec[vec_id][o];
+
+        while(vec_id < this->vec.size())
+        {
+
+            for(;o<MAX_SIMD_VECTOR_SIZE-1;++o)
+            {
+                this->vec[vec_id][o]=this->vec[vec_id][o+1];
+            }
+
+            if( vec_id < this->vec.size() )
+            {
+                this->vec[vec_id][MAX_SIMD_VECTOR_SIZE-1]=this->vec[vec_id+1][0];
+            }
+
+            ++vec_id;
+            o=0;
+        }
+
+        this->ptr--;
+
+        if(this->ptr==0)
+        {
+            this->vec.pop_back();
+        }
+
+        return to_rem;
+
+    }
+
+    void SIMDVector::insert(size_t i,number n)
+    {
+
+        size_t vec_id=i/MAX_SIMD_VECTOR_SIZE;
+
+        size_t o=i%MAX_SIMD_VECTOR_SIZE;
+
+        this->append(this->get(this->size()-1));
+
+        size_t vec_it=this->vec.size() - 1 - ( this->size()%MAX_SIMD_VECTOR_SIZE == 1 );
+
+        while(vec_it>vec_id)
+        {
+            for(size_t i=MAX_SIMD_VECTOR_SIZE-1;i>0;--i)
+            {
+                this->vec[vec_it][i]=this->vec[vec_it][i-1];
+            }
+
+            vec_it--;
+        }
+
+        for(size_t i=MAX_SIMD_VECTOR_SIZE-1;i>o;--i)
+        {
+            this->vec[vec_id][i]=this->vec[vec_id][i-1];
+        }
+
+        this->vec[vec_id][o]=n;
+
     }
 
     void SIMDVector::reserve(size_t N)

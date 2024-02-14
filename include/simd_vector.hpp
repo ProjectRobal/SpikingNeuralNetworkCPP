@@ -47,8 +47,9 @@ namespace snn
 
         number append(number n);
 
-        number remove(size_t i)
-        {}
+        number remove(size_t i);
+
+        void insert(size_t i,number n);
 
         void append(const SIMD_MASK& mask);
 

@@ -20,4 +20,4 @@ typedef std::experimental::fixed_size_simd_mask<number , MAX_SIMD_VECTOR_SIZE> S
 
 #define MAX_THREAD_POOL 8
 
-#define NEURON_THRESHOLD_LEVEL 50.f
+#define NEURON_THRESHOLD_LEVEL 25.f
